@@ -3,11 +3,10 @@ package com.qlassalle.services;
 import com.qlassalle.core.Instruction;
 import com.qlassalle.core.Lawn;
 import com.qlassalle.core.Mower;
-import com.qlassalle.core.OrientationChange;
 
 import java.util.Queue;
 
-import static com.qlassalle.core.OrientationChange.*;
+import static com.qlassalle.core.OrientationChange.Rotation;
 
 public class LawnService {
 
@@ -40,10 +39,8 @@ public class LawnService {
     }
 
     private void applyInstruction(Instruction instruction, Mower mower) {
-        if (instruction == Instruction.R) {
-            mower.changeOrientation(Rotation.RIGHT);
-        } else if (instruction == Instruction.L) {
-            mower.changeOrientation(Rotation.LEFT);
+        if (instruction instanceof Rotation) {
+            mower.changeOrientation((Rotation) instruction);
         } else {
             moveMower(mower);
         }

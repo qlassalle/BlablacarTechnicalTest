@@ -1,12 +1,6 @@
 package com.qlassalle.core;
 
-import com.qlassalle.core.OrientationChange.Rotation;
 import com.qlassalle.services.LawnService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,8 +10,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Stream;
 
-import static com.qlassalle.core.Instruction.*;
+import static com.qlassalle.core.Movement.F;
 import static com.qlassalle.core.Orientation.*;
+import static com.qlassalle.core.OrientationChange.Rotation.L;
+import static com.qlassalle.core.OrientationChange.Rotation.R;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MowerTest {

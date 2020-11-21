@@ -5,10 +5,10 @@ import lombok.Getter;
 
 import static com.qlassalle.core.OrientationChange.*;
 
+@Getter
 public class Mower {
-    @Getter
+
     private Coordinates coordinates;
-    @Getter
     private Orientation orientation;
 
     public Mower(int x, int y, Orientation orientation) {

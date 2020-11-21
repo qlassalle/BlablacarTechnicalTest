@@ -1,7 +1,4 @@
 package com.qlassalle.core;
 
-public enum Instruction {
-    R,
-    L,
-    F
+public interface Instruction {
 }
