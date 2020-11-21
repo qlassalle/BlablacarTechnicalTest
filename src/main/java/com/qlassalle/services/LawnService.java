@@ -1,7 +1,13 @@
 package com.qlassalle.services;
 
+import com.qlassalle.core.Instruction;
 import com.qlassalle.core.Lawn;
 import com.qlassalle.core.Mower;
+import com.qlassalle.core.OrientationChange;
+
+import java.util.Queue;
+
+import static com.qlassalle.core.OrientationChange.*;
 
 public class LawnService {
 
@@ -27,5 +33,19 @@ public class LawnService {
 
     private boolean isMoveValid(Mower mower) {
         return lawn.isAvailableCell(mower.computeNextMove());
+    }
+
+    public void applyInstruction(Queue<Instruction> instructions, Mower mower) {
+        instructions.forEach(instruction -> applyInstruction(instruction, mower));
+    }
+
+    private void applyInstruction(Instruction instruction, Mower mower) {
+        if (instruction == Instruction.R) {
+            mower.changeOrientation(Rotation.RIGHT);
+        } else if (instruction == Instruction.L) {
+            mower.changeOrientation(Rotation.LEFT);
+        } else {
+            moveMower(mower);
+        }
     }
 }

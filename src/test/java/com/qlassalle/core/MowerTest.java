@@ -1,18 +1,24 @@
 package com.qlassalle.core;
 
+import com.qlassalle.core.OrientationChange.Rotation;
 import com.qlassalle.services.LawnService;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
 import java.util.stream.Stream;
 
+import static com.qlassalle.core.Instruction.*;
 import static com.qlassalle.core.Orientation.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MowerTest {
 
@@ -30,10 +36,10 @@ class MowerTest {
 
     private static Stream<Arguments> moveMowerTestCases() {
         return Stream.of(
-                Arguments.of(new MowerTestCase(1, 2, NORTH, 1, 3, "Move to the north")),
-                Arguments.of(new MowerTestCase(3, 3, EAST, 4, 3, "Move to the east")),
-                Arguments.of(new MowerTestCase(2, 4, SOUTH, 2, 3, "Move to the south")),
-                Arguments.of(new MowerTestCase(4, 1, WEST, 3, 1, "Move to the west"))
+                Arguments.of(new MowerTestCase(1, 2, NORTH, 1, 3, NORTH, "Move to the north")),
+                Arguments.of(new MowerTestCase(3, 3, EAST, 4, 3, EAST, "Move to the east")),
+                Arguments.of(new MowerTestCase(2, 4, SOUTH, 2, 3, SOUTH, "Move to the south")),
+                Arguments.of(new MowerTestCase(4, 1, WEST, 3, 1, WEST, "Move to the west"))
         );
     }
 
@@ -49,30 +55,80 @@ class MowerTest {
 
     private static Stream<Arguments> moveMowerNextToWallTestCases() {
         return Stream.of(
-                Arguments.of(new MowerTestCase(5, 5, NORTH, 5, 5, "Do not move if next to a wall at the north")),
-                Arguments.of(new MowerTestCase(5, 2, EAST, 5, 2, "Do not move if next to a wall at the east")),
-                Arguments.of(new MowerTestCase(1, 0, SOUTH, 1, 0, "Do not move if next to a wall at the south")),
-                Arguments.of(new MowerTestCase(0, 0, WEST, 0, 0, "Do not move if next to a wall at the west"))
+                Arguments.of(new MowerTestCase(5, 5, NORTH, 5, 5, NORTH, "Do not move if next to a wall at the north")),
+                Arguments.of(new MowerTestCase(5, 2, EAST, 5, 2, EAST, "Do not move if next to a wall at the east")),
+                Arguments.of(new MowerTestCase(1, 0, SOUTH, 1, 0, SOUTH, "Do not move if next to a wall at the south")),
+                Arguments.of(new MowerTestCase(0, 0, WEST, 0, 0, WEST,"Do not move if next to a wall at the west"))
         );
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("moveMowerWithChangeOfOrientationTestCases")
+    void shouldMoveAMowerWithChangeOfOrientation(MowerTestCase mowerTestCase) {
+        Lawn lawn = new Lawn(5, 5);
+        Mower mower = mowerTestCase.mower;
+        lawnService = new LawnService(lawn, mower);
+        lawnService.applyInstruction(mowerTestCase.instructions, mower);
+        assertEquals(mower.getOrientation(), mowerTestCase.finalOrientation);
+    }
+
+    private static Stream<Arguments> moveMowerWithChangeOfOrientationTestCases() {
+        return Stream.of(
+                Arguments.of(new MowerTestCase(2, 1, NORTH, 3, 1, List.of(R, F), EAST,
+                                               "Change orientation to the right once and move forward")),
+                Arguments.of(new MowerTestCase(2,1, EAST, 2, 2, List.of(L, F), NORTH,
+                                               "Change orientation to the left once and move forward")),
+                Arguments.of(new MowerTestCase(4, 2, SOUTH, 4, 4, List.of(R, R, F, F), NORTH,
+                                               "Change orientation to the right twice and move forward twice")),
+                Arguments.of(new MowerTestCase(4, 4, WEST, 5, 4, List.of(L, L, F, F), EAST,
+                                               "Change orientation to the left twice and move forward only once because" +
+                                                       " of a wall")),
+                Arguments.of(new MowerTestCase(1, 2, NORTH, 1, 3, List.of(L, F, L, F, L, F, L, F, F), NORTH,
+                                               "1st Example implementation")),
+                Arguments.of(new MowerTestCase(3, 3, EAST, 5, 1, List.of(F, F, R, F, F, R, F, R, R, F), EAST,
+                                               "2nd Example implementation"))
+        );
+    }
+
+    /**
+     * test changing orientation
+     * test hitting other mower
+     * follow set of instruction
+     */
+
     private static class MowerTestCase {
 
-        private int startX;
-        private int startY;
-        private int destX;
-        private int destY;
+        private final int startX;
+        private final int startY;
+        private final int destX;
+        private final int destY;
         private final Mower mower;
         private final String displayName;
+        private final Queue<Instruction> instructions;
+        private final Orientation finalOrientation;
 
         public MowerTestCase(int startX, int startY, Orientation orientation, int destX, int destY,
-                             String displayName) {
+                             Orientation finalOrientation, String displayName) {
             this.startX = startX;
             this.startY = startY;
             this.destX = destX;
             this.destY = destY;
             this.mower = new Mower(startX, startY, orientation);
             this.displayName = displayName;
+            this.instructions = null;
+            this.finalOrientation = finalOrientation;
+        }
+
+        public MowerTestCase(int startX, int startY, Orientation orientation, int destX, int destY,
+                             List<Instruction> instructions, Orientation finalOrientation, String displayName) {
+            this.startX = startX;
+            this.startY = startY;
+            this.destX = destX;
+            this.destY = destY;
+            this.mower = new Mower(startX, startY, orientation);
+            this.displayName = displayName;
+            this.instructions = new ArrayDeque<>(instructions);
+            this.finalOrientation = finalOrientation;
         }
 
         @Override

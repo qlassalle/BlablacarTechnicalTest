@@ -1,18 +1,19 @@
 package com.qlassalle.core;
 
 import com.qlassalle.exceptions.InvalidOrientationException;
+import lombok.Getter;
+
+import static com.qlassalle.core.OrientationChange.*;
 
 public class Mower {
+    @Getter
     private Coordinates coordinates;
+    @Getter
     private Orientation orientation;
 
     public Mower(int x, int y, Orientation orientation) {
         this.coordinates = new Coordinates(x, y);
         this.orientation = orientation;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
     }
 
     public void move() {
@@ -40,5 +41,9 @@ public class Mower {
                 throw new InvalidOrientationException();
         }
         return futurCoordinates;
+    }
+
+    public void changeOrientation(Rotation rotation) {
+        this.orientation = rotate(rotation, orientation);
     }
 }
