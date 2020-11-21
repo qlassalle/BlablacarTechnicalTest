@@ -1,5 +1,7 @@
 package com.qlassalle.core;
 
+import com.qlassalle.exceptions.InvalidCellException;
+
 public class Lawn {
 
     private final int width;
@@ -23,8 +25,10 @@ public class Lawn {
         return cells;
     }
 
-    public Cell getZone(int x, int y) {
-        // TODO: 21/11/2020 should we handle out of bounds here?
+    public Cell getCell(int x, int y) {
+        if (x > width || y > height || x < 0 || y < 0) {
+            throw new InvalidCellException("The cell " + x + ", " + y + " is invalid");
+        }
         return grid[x][y];
     }
 

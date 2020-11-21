@@ -13,9 +13,9 @@ class LawnTest {
     @Test
     void shouldCreateALawnWithOnemower() {
         Lawn lawn = new Lawn(5, 5);
-        assertFalse(lawn.getZone(1, 2).isOccupied());
+        assertFalse(lawn.getCell(1, 2).isOccupied());
         Mower mower = new Mower(1, 2, NORTH);
         lawn.addMower(mower);
-        assertTrue(lawn.getZone(1, 2).isOccupied());
+        assertTrue(lawn.getCell(1, 2).isOccupied());
     }
 }

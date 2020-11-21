@@ -1,13 +1,13 @@
 package com.qlassalle.core;
 
 import com.qlassalle.services.LawnService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.qlassalle.core.Movement.F;
@@ -26,8 +26,8 @@ class MowerTest {
         Lawn lawn = new Lawn(5, 5);
         lawnService = new LawnService(lawn, mowerTestCase.mower);
         lawnService.moveMower(mowerTestCase.mower);
-        assertFalse(lawn.getZone(mowerTestCase.startX, mowerTestCase.startY).isOccupied());
-        assertTrue(lawn.getZone(mowerTestCase.destX, mowerTestCase.destY).isOccupied());
+        assertFalse(lawn.getCell(mowerTestCase.startX, mowerTestCase.startY).isOccupied());
+        assertTrue(lawn.getCell(mowerTestCase.destX, mowerTestCase.destY).isOccupied());
     }
 
     private static Stream<Arguments> moveMowerTestCases() {
@@ -44,9 +44,9 @@ class MowerTest {
     void shouldNotMoveAMowerWhenNextToAWall(MowerTestCase mowerTestCase) {
         Lawn lawn = new Lawn(5, 5);
         lawnService = new LawnService(lawn, mowerTestCase.mower);
-        assertTrue(lawn.getZone(mowerTestCase.startX, mowerTestCase.startY).isOccupied());
+        assertTrue(lawn.getCell(mowerTestCase.startX, mowerTestCase.startY).isOccupied());
         lawnService.moveMower(mowerTestCase.mower);
-        assertTrue(lawn.getZone(mowerTestCase.destX, mowerTestCase.destY).isOccupied());
+        assertTrue(lawn.getCell(mowerTestCase.destX, mowerTestCase.destY).isOccupied());
     }
 
     private static Stream<Arguments> moveMowerNextToWallTestCases() {
@@ -86,11 +86,17 @@ class MowerTest {
         );
     }
 
-    /**
-     * test changing orientation
-     * test hitting other mower
-     * follow set of instruction
-     */
+    @DisplayName("Should move because of another mower")
+    @Test
+    void shouldNotMoveBecauseOfAnotherMower() {
+        Lawn lawn = new Lawn(5, 5);
+        Mower mowerOne = new Mower(2, 2, EAST);
+        Mower mowerTwo = new Mower(3, 2, NORTH);
+        lawnService = new LawnService(lawn, mowerOne, mowerTwo);
+        lawnService.applyInstruction(new ArrayDeque<>(List.of(F)), mowerOne);
+        assertEquals(2, mowerOne.getCoordinates().getX());
+        assertEquals(2, mowerOne.getCoordinates().getY());
+    }
 
     private static class MowerTestCase {
 
@@ -111,7 +117,7 @@ class MowerTest {
             this.destY = destY;
             this.mower = new Mower(startX, startY, orientation);
             this.displayName = displayName;
-            this.instructions = null;
+            this.instructions = new ArrayDeque<>();
             this.finalOrientation = finalOrientation;
         }
 
@@ -132,9 +138,4 @@ class MowerTest {
             return displayName;
         }
     }
-    /**
-     * cant move bcs of wall
-     * cant move bcs of mower
-     * change orientation of mower
-     */
 }

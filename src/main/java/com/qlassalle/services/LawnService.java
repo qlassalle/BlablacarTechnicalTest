@@ -12,9 +12,11 @@ public class LawnService {
 
     private final Lawn lawn;
 
-    public LawnService(Lawn lawn, Mower mower) {
+    public LawnService(Lawn lawn, Mower... mowers) {
         this.lawn = lawn;
-        this.lawn.addMower(mower);
+        for (Mower mower : mowers) {
+            this.lawn.addMower(mower);
+        }
     }
 
 //    public void addMower(Mower mower) {
