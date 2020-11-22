@@ -26,4 +26,9 @@ public class Coordinates {
     public void moveSouth() {
         --this.y;
     }
+
+    @Override
+    public String toString() {
+        return "Coordinates{" + "x=" + x + ", y=" + y + '}';
+    }
 }

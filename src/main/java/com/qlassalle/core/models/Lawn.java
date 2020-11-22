@@ -1,17 +1,24 @@
 package com.qlassalle.core.models;
 
 import com.qlassalle.core.exceptions.InvalidCellException;
+import lombok.Getter;
+
+import java.util.List;
 
 public class Lawn {
 
     private final int width;
     private final int height;
     private final Cell[][] grid;
+    @Getter
+    private final List<Mower> mowers;
 
-    public Lawn(int width, int height) {
+    public Lawn(int width, int height, List<Mower> mowers) {
         this.width = width;
         this.height = height;
         this.grid = initializeGrid(this.width + 1, this.height + 1);
+        this.mowers = mowers;
+        mowers.forEach(this::placeMower);
     }
 
     private Cell[][] initializeGrid(int width, int height) {
@@ -32,7 +39,7 @@ public class Lawn {
         return grid[x][y];
     }
 
-    public void addMower(Mower mower) {
+    public void placeMower(Mower mower) {
         this.grid[mower.getCoordinates().getX()][mower.getCoordinates().getY()].occupy();
     }
 

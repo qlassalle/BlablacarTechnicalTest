@@ -1,10 +1,11 @@
 package com.qlassalle.core.services;
 
 import com.qlassalle.core.instructions.Instruction;
+import com.qlassalle.core.models.Coordinates;
 import com.qlassalle.core.models.Lawn;
 import com.qlassalle.core.models.Mower;
 
-import java.util.Queue;
+import java.util.List;
 
 import static com.qlassalle.core.utils.OrientationChange.Rotation;
 
@@ -12,16 +13,23 @@ public class LawnService {
 
     private final Lawn lawn;
 
-    public LawnService(Lawn lawn, Mower... mowers) {
-        this.lawn = lawn;
-        for (Mower mower : mowers) {
-            this.lawn.addMower(mower);
-        }
+    public LawnService(int lawnWidth, int lawnHeight, List<Mower> mowers) {
+        this.lawn = new Lawn(lawnWidth, lawnHeight, mowers);
     }
 
 //    public void addMower(Mower mower) {
 //        this.lawn.addMower(mower);
 //    }
+
+    public void startMowers() {
+        for (Mower mower : lawn.getMowers()) {
+            applyInstruction(mower);
+        }
+    }
+
+    public boolean isAvailableCell(Coordinates coordinates) {
+        return lawn.isAvailableCell(coordinates);
+    }
 
     public void moveMower(Mower mower) {
         if (!isMoveValid(mower)) {
@@ -29,15 +37,15 @@ public class LawnService {
         }
         this.lawn.removeMower(mower);
         mower.move();
-        this.lawn.addMower(mower);
+        this.lawn.placeMower(mower);
     }
 
     private boolean isMoveValid(Mower mower) {
         return lawn.isAvailableCell(mower.computeNextMove());
     }
 
-    public void applyInstruction(Queue<Instruction> instructions, Mower mower) {
-        instructions.forEach(instruction -> applyInstruction(instruction, mower));
+    public void applyInstruction(Mower mower) {
+        mower.getInstructions().forEach(instruction -> applyInstruction(instruction, mower));
     }
 
     private void applyInstruction(Instruction instruction, Mower mower) {
