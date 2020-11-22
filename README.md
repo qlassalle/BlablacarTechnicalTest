@@ -1,4 +1,4 @@
-# Blablacar technical test
+# BlaBlaCar technical test
 
 ## How to run
 
