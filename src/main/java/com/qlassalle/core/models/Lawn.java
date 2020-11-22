@@ -39,7 +39,14 @@ public class Lawn {
         return grid[x][y];
     }
 
+    public Cell getCell(Coordinates coordinates) {
+        return getCell(coordinates.getX(), coordinates.getY());
+    }
+
     public void placeMower(Mower mower) {
+        if (this.grid[mower.getCoordinates().getX()][mower.getCoordinates().getY()].isOccupied()) {
+            throw new InvalidCellException("This cell is already used");
+        }
         this.grid[mower.getCoordinates().getX()][mower.getCoordinates().getY()].occupy();
     }
 

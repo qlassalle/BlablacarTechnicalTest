@@ -21,6 +21,9 @@ public class LawnMowerInputFileReader {
     }
 
     public static Queue<String> readAsList(InputStream resourceAsStream) {
+        if (resourceAsStream == null) {
+            throw new InputFileProcessingException("Input stream is null");
+        }
         Queue<String> fileAsList = new LinkedList<>(); // to keep order of insertion
 
         try (resourceAsStream) {

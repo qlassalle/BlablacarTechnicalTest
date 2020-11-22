@@ -23,7 +23,8 @@ public class LawnController {
 
         LawnService lawnService = new LawnService(lawnDimensions.get(0), lawnDimensions.get(1), mowers);
         lawnService.startMowers();
-        
+
+        mowers.forEach(System.out::println);
         return mowers.stream()
                      .map(Mower::toString)
                      .collect(Collectors.toCollection(ArrayDeque::new));
@@ -35,11 +36,10 @@ public class LawnController {
             List<String> mowerDetails = Arrays.asList(instructions.poll().split(" "));
             Queue<Instruction> mowerInstructions =
                     LawnMowerInputFileReader.convertStringToInstructionList(Objects.requireNonNull(instructions.poll()));
-            final Mower mower = new Mower(Integer.parseInt(mowerDetails.get(0)),
-                                          Integer.parseInt(mowerDetails.get(1)),
-                                          (Orientation) Orientation.of(mowerDetails.get(2)),
-                                          mowerInstructions);
-            mowers.add(mower);
+            mowers.add(new Mower(Integer.parseInt(mowerDetails.get(0)),
+                                 Integer.parseInt(mowerDetails.get(1)),
+                                 (Orientation) Orientation.of(mowerDetails.get(2)),
+                                 mowerInstructions));
         }
 
         return mowers;
