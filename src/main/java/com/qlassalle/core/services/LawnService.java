@@ -1,12 +1,12 @@
-package com.qlassalle.services;
+package com.qlassalle.core.services;
 
-import com.qlassalle.core.Instruction;
-import com.qlassalle.core.Lawn;
-import com.qlassalle.core.Mower;
+import com.qlassalle.core.instructions.Instruction;
+import com.qlassalle.core.models.Lawn;
+import com.qlassalle.core.models.Mower;
 
 import java.util.Queue;
 
-import static com.qlassalle.core.OrientationChange.Rotation;
+import static com.qlassalle.core.utils.OrientationChange.Rotation;
 
 public class LawnService {
 

@@ -1,6 +1,6 @@
-package com.qlassalle.core;
+package com.qlassalle.core.models;
 
-import com.qlassalle.exceptions.InvalidCellException;
+import com.qlassalle.core.exceptions.InvalidCellException;
 
 public class Lawn {
 

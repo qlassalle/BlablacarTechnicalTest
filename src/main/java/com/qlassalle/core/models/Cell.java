@@ -1,4 +1,4 @@
-package com.qlassalle.core;
+package com.qlassalle.core.models;
 
 public class Cell {
     private final int x;

@@ -1,4 +1,4 @@
-package com.qlassalle.core;
+package com.qlassalle.core.instructions;
 
 public enum Movement implements Instruction {
     F

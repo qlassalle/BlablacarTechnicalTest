@@ -1,8 +1,11 @@
-package com.qlassalle.core;
+package com.qlassalle.core.utils;
+
+import com.qlassalle.core.instructions.Instruction;
+import com.qlassalle.core.instructions.Orientation;
 
 import java.util.Map;
 
-import static com.qlassalle.core.Orientation.*;
+import static com.qlassalle.core.instructions.Orientation.*;
 
 public class OrientationChange {
 
@@ -16,7 +19,7 @@ public class OrientationChange {
         L;
     }
 
-    public static Orientation rotate(Rotation rotation, Orientation orientation) {
+    public static Orientation computeRotation(Rotation rotation, Orientation orientation) {
         return rotation == Rotation.L ? LEFT_ROTATION.get(orientation) : RIGHT_ROTATION.get(orientation);
     }
 }

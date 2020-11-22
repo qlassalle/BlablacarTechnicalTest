@@ -1,6 +1,11 @@
 package com.qlassalle.core;
 
-import com.qlassalle.services.LawnService;
+import com.qlassalle.core.instructions.Instruction;
+import com.qlassalle.core.instructions.Orientation;
+import com.qlassalle.core.models.Lawn;
+import com.qlassalle.core.models.Mower;
+import com.qlassalle.core.services.LawnService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,20 +15,25 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.qlassalle.core.Movement.F;
-import static com.qlassalle.core.Orientation.*;
-import static com.qlassalle.core.OrientationChange.Rotation.L;
-import static com.qlassalle.core.OrientationChange.Rotation.R;
+import static com.qlassalle.core.instructions.Movement.F;
+import static com.qlassalle.core.instructions.Orientation.*;
+import static com.qlassalle.core.utils.OrientationChange.Rotation.L;
+import static com.qlassalle.core.utils.OrientationChange.Rotation.R;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MowerTest {
 
     private LawnService lawnService;
+    private Lawn lawn;
+
+    @BeforeEach
+    void setUp() {
+        lawn = new Lawn(5, 5);
+    }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("moveMowerTestCases")
     void shouldMoveAMowerDependingOfItsOrientation(MowerTestCase mowerTestCase) {
-        Lawn lawn = new Lawn(5, 5);
         lawnService = new LawnService(lawn, mowerTestCase.mower);
         lawnService.moveMower(mowerTestCase.mower);
         assertFalse(lawn.getCell(mowerTestCase.startX, mowerTestCase.startY).isOccupied());
@@ -42,7 +52,6 @@ class MowerTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("moveMowerNextToWallTestCases")
     void shouldNotMoveAMowerWhenNextToAWall(MowerTestCase mowerTestCase) {
-        Lawn lawn = new Lawn(5, 5);
         lawnService = new LawnService(lawn, mowerTestCase.mower);
         assertTrue(lawn.getCell(mowerTestCase.startX, mowerTestCase.startY).isOccupied());
         lawnService.moveMower(mowerTestCase.mower);
@@ -61,7 +70,6 @@ class MowerTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("moveMowerWithChangeOfOrientationTestCases")
     void shouldMoveAMowerWithChangeOfOrientation(MowerTestCase mowerTestCase) {
-        Lawn lawn = new Lawn(5, 5);
         Mower mower = mowerTestCase.mower;
         lawnService = new LawnService(lawn, mower);
         lawnService.applyInstruction(mowerTestCase.instructions, mower);
@@ -89,7 +97,6 @@ class MowerTest {
     @DisplayName("Should move because of another mower")
     @Test
     void shouldNotMoveBecauseOfAnotherMower() {
-        Lawn lawn = new Lawn(5, 5);
         Mower mowerOne = new Mower(2, 2, EAST);
         Mower mowerTwo = new Mower(3, 2, NORTH);
         lawnService = new LawnService(lawn, mowerOne, mowerTwo);

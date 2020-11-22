@@ -1,9 +1,10 @@
-package com.qlassalle.core;
+package com.qlassalle.core.models;
 
-import com.qlassalle.exceptions.InvalidOrientationException;
+import com.qlassalle.core.instructions.Orientation;
+import com.qlassalle.core.exceptions.InvalidOrientationException;
 import lombok.Getter;
 
-import static com.qlassalle.core.OrientationChange.*;
+import static com.qlassalle.core.utils.OrientationChange.*;
 
 @Getter
 public class Mower {
@@ -37,13 +38,13 @@ public class Mower {
                 break;
             default:
                 // keep a default here because if someone adds a new orientation without implementing its logic,
-                // he'll know rapidly.
+                // he'll know rapidly that he has to.
                 throw new InvalidOrientationException();
         }
         return futurCoordinates;
     }
 
     public void changeOrientation(Rotation rotation) {
-        this.orientation = rotate(rotation, orientation);
+        this.orientation = computeRotation(rotation, orientation);
     }
 }

@@ -1,4 +1,4 @@
-package com.qlassalle.exceptions;
+package com.qlassalle.core.exceptions;
 
 public class InvalidCellException extends RuntimeException {
 

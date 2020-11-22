@@ -1,21 +1,15 @@
-package com.qlassalle.core;
+package com.qlassalle.core.models;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+@EqualsAndHashCode
 public class Coordinates {
     private int x;
     private int y;
-
-    public Coordinates(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
 
     public void moveNorth() {
         ++this.y;

@@ -1,9 +1,11 @@
 package com.qlassalle.core;
 
+import com.qlassalle.core.models.Lawn;
+import com.qlassalle.core.models.Mower;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.qlassalle.core.Orientation.NORTH;
+import static com.qlassalle.core.instructions.Orientation.NORTH;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
