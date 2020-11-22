@@ -1,13 +1,9 @@
 package com.qlassalle.core.models;
 
 public class Cell {
-    private final int x;
-    private final int y;
     private boolean occupied;
 
-    public Cell(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Cell() {
         this.occupied = false;
     }
 

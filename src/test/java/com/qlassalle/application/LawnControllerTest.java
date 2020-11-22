@@ -13,20 +13,16 @@ class LawnControllerTest {
     private final LawnController lawnController = new LawnController();
 
     @DisplayName("Should create lawn and process instructions coming from input file")
-    @RepeatedTest(1000)
+    @RepeatedTest(100)
     void shouldCreateLawnAndProcessInstructionsComingFromInputFile() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        var resourceAsStream = classLoader.getResourceAsStream("input/two_mowers.txt");
-        Queue<String> mowerFinalPositions = lawnController.process(resourceAsStream);
+        Queue<String> mowerFinalPositions = lawnController.process("input/two_mowers.txt");
         assertIterableEquals(List.of("1 3 N", "5 1 E"), mowerFinalPositions);
     }
 
     @DisplayName("Should create lawn and process instructions for two mowers hitting")
-    @RepeatedTest(1000)
+    @RepeatedTest(100)
     void shouldCreateLawnAndProcessInstructionsComingFromInputFileWithTwoMowersHitting() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        var resourceAsStream = classLoader.getResourceAsStream("input/two_mowers_hitting.txt");
-        Queue<String> mowerFinalPositions = lawnController.process(resourceAsStream);
+        Queue<String> mowerFinalPositions = lawnController.process("input/two_mowers_hitting.txt");
         assertIterableEquals(List.of("4 4 E", "3 3 E"), mowerFinalPositions);
     }
 
@@ -37,8 +33,6 @@ class LawnControllerTest {
      * if threads are really launched and locks correctly used.
      */
     void lotOfMowersLittleSpace() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        var resourceAsStream = classLoader.getResourceAsStream("input/lot_of_mowers.txt");
-        Queue<String> mowerFinalPositions = lawnController.process(resourceAsStream);
+        lawnController.process("input/lot_of_mowers.txt");
     }
 }

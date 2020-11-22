@@ -5,7 +5,6 @@ import com.qlassalle.core.instructions.Instruction;
 import com.qlassalle.core.instructions.Orientation;
 import lombok.Getter;
 
-import java.util.ArrayDeque;
 import java.util.Queue;
 
 import static com.qlassalle.core.utils.OrientationChange.Rotation;
@@ -17,12 +16,6 @@ public class Mower {
     private Coordinates coordinates;
     private Orientation orientation;
     private final Queue<Instruction> instructions;
-
-    public Mower(int x, int y, Orientation orientation) {
-        this.coordinates = new Coordinates(x, y);
-        this.orientation = orientation;
-        this.instructions = new ArrayDeque<>();
-    }
 
     public Mower(int x, int y, Orientation orientation, Queue<Instruction> instructions) {
         this.coordinates = new Coordinates(x, y);

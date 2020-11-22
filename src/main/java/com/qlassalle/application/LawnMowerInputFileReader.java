@@ -7,7 +7,6 @@ import com.qlassalle.core.utils.OrientationChange;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
@@ -20,7 +19,9 @@ public class LawnMowerInputFileReader {
         throw new UnsupportedOperationException("Utility method should not be instantiated");
     }
 
-    public static Queue<String> readAsList(InputStream resourceAsStream) {
+    public static Queue<String> readAsList(String fileName) {
+        ClassLoader classLoader = LawnMowerInputFileReader.class.getClassLoader();
+        var resourceAsStream = classLoader.getResourceAsStream(fileName);
         if (resourceAsStream == null) {
             throw new InputFileProcessingException("Input stream is null");
         }
@@ -28,9 +29,9 @@ public class LawnMowerInputFileReader {
 
         try (resourceAsStream) {
             InputStreamReader reader = new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8);
-            BufferedReader breader = new BufferedReader(reader);
+            BufferedReader bufferedReader = new BufferedReader(reader);
             String line;
-            while ((line = breader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 fileAsList.add(line);
             }
         } catch (IOException e) {
@@ -52,11 +53,12 @@ public class LawnMowerInputFileReader {
 
     public static Queue<Instruction> convertStringToInstructionList(String text) {
         Queue<Instruction> instructions = new LinkedList<>();
-        for (char character : text.toCharArray()) {
-            if (Movement.F.getShortName() == character) {
+        for (int i = 0; i < text.length(); i++) {
+            String current = text.substring(i, i + 1);
+            if (Movement.F.name().equals(current)) {
                 instructions.add(Movement.F);
             } else {
-                instructions.add(OrientationChange.Rotation.of(character).get());
+                instructions.add(OrientationChange.Rotation.of(current));
             }
         }
 

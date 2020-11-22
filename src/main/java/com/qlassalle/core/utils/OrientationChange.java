@@ -1,10 +1,10 @@
 package com.qlassalle.core.utils;
 
+import com.qlassalle.core.exceptions.InvalidOrientationException;
 import com.qlassalle.core.instructions.Instruction;
 import com.qlassalle.core.instructions.Orientation;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static com.qlassalle.core.instructions.Orientation.*;
 
@@ -14,23 +14,17 @@ public class OrientationChange {
     private static final Map<Orientation, Orientation> LEFT_ROTATION = Map.of(N, W, W, S, S, E, E, N);
 
     public enum Rotation implements Instruction {
-        R('R'),
-        L('L');
+        R,
+        L;
 
-        private final char shortName;
-
-        Rotation(char shortName) {
-            this.shortName = shortName;
-        }
-
-        public static Optional<Instruction> of(char value) {
+        public static Rotation of(String value) {
             for (Rotation rotation : values()) {
-                if (rotation.shortName == value) {
-                    return Optional.of(rotation);
+                if (rotation.name().equals(value)) {
+                    return rotation;
                 }
             }
 
-            return Optional.empty();
+            throw new InvalidOrientationException();
         }
     }
 

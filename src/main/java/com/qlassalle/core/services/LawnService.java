@@ -36,11 +36,11 @@ public class LawnService {
         }
     }
 
-    public boolean isAvailableCell(Coordinates coordinates) {
+    boolean isAvailableCell(Coordinates coordinates) {
         return lawn.isAvailableCell(coordinates);
     }
 
-    public void moveMower(Mower mower) {
+    private void moveMower(Mower mower) {
         // fail-fast if move isn't valid
         if (!isMoveValid(mower)) {
             return;
@@ -64,7 +64,7 @@ public class LawnService {
         return lawn.isAvailableCell(mower.computeNextMove());
     }
 
-    public void applyInstruction(Mower mower) {
+    private void applyInstruction(Mower mower) {
         mower.getInstructions().forEach(instruction -> applyInstruction(instruction, mower));
     }
 

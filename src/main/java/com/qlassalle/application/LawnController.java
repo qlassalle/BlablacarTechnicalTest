@@ -6,14 +6,13 @@ import com.qlassalle.core.instructions.Orientation;
 import com.qlassalle.core.models.Mower;
 import com.qlassalle.core.services.LawnService;
 
-import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LawnController {
 
-    public Queue<String> process(InputStream resourceAsStream) {
-        Queue<String> instructions = LawnMowerInputFileReader.readAsList(resourceAsStream);
+    public Queue<String> process(String fileName) {
+        Queue<String> instructions = LawnMowerInputFileReader.readAsList(fileName);
         if (instructions.isEmpty()) {
             throw new InputFileProcessingException("Instructions must be present");
         }

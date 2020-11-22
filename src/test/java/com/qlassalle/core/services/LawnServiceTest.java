@@ -1,10 +1,9 @@
-package com.qlassalle.core;
+package com.qlassalle.core.services;
 
 import com.qlassalle.core.instructions.Instruction;
 import com.qlassalle.core.instructions.Orientation;
 import com.qlassalle.core.models.Coordinates;
 import com.qlassalle.core.models.Mower;
-import com.qlassalle.core.services.LawnService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +20,7 @@ import static com.qlassalle.core.utils.OrientationChange.Rotation.L;
 import static com.qlassalle.core.utils.OrientationChange.Rotation.R;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MowerTest {
+class LawnServiceTest {
 
     private LawnService lawnService;
     private final int lawnWidthDimension = 5;
@@ -31,17 +30,17 @@ class MowerTest {
     @MethodSource("moveMowerTestCases")
     void shouldMoveAMowerDependingOfItsOrientation(MowerTestCase mowerTestCase) {
         lawnService = new LawnService(lawnWidthDimension, lawnHeightDimension, List.of(mowerTestCase.mower));
-        lawnService.moveMower(mowerTestCase.mower);
+        lawnService.startMowers();
         assertTrue(lawnService.isAvailableCell(new Coordinates(mowerTestCase.startX, mowerTestCase.startY)));
         assertFalse(lawnService.isAvailableCell(new Coordinates(mowerTestCase.destX, mowerTestCase.destY)));
     }
 
     private static Stream<Arguments> moveMowerTestCases() {
         return Stream.of(
-                Arguments.of(new MowerTestCase(1, 2, N, 1, 3, N, "Move to the north")),
-                Arguments.of(new MowerTestCase(3, 3, E, 4, 3, E, "Move to the east")),
-                Arguments.of(new MowerTestCase(2, 4, S, 2, 3, S, "Move to the south")),
-                Arguments.of(new MowerTestCase(4, 1, W, 3, 1, W, "Move to the west"))
+                Arguments.of(new MowerTestCase(1, 2, N, 1, 3, List.of(F), N, "Move to the north")),
+                Arguments.of(new MowerTestCase(3, 3, E, 4, 3, List.of(F), E, "Move to the east")),
+                Arguments.of(new MowerTestCase(2, 4, S, 2, 3, List.of(F), S, "Move to the south")),
+                Arguments.of(new MowerTestCase(4, 1, W, 3, 1, List.of(F), W, "Move to the west"))
         );
     }
 
@@ -50,16 +49,20 @@ class MowerTest {
     void shouldNotMoveAMowerWhenNextToAWall(MowerTestCase mowerTestCase) {
         lawnService = new LawnService(lawnWidthDimension, lawnHeightDimension, List.of(mowerTestCase.mower));
         assertFalse(lawnService.isAvailableCell(new Coordinates(mowerTestCase.startX, mowerTestCase.startY)));
-        lawnService.moveMower(mowerTestCase.mower);
+        lawnService.startMowers();
         assertFalse(lawnService.isAvailableCell(new Coordinates(mowerTestCase.destX, mowerTestCase.destY)));
     }
 
     private static Stream<Arguments> moveMowerNextToWallTestCases() {
         return Stream.of(
-                Arguments.of(new MowerTestCase(5, 5, N, 5, 5, N, "Do not move if next to a wall at the north")),
-                Arguments.of(new MowerTestCase(5, 2, E, 5, 2, E, "Do not move if next to a wall at the east")),
-                Arguments.of(new MowerTestCase(1, 0, S, 1, 0, S, "Do not move if next to a wall at the south")),
-                Arguments.of(new MowerTestCase(0, 0, W, 0, 0, W, "Do not move if next to a wall at the west"))
+                Arguments.of(new MowerTestCase(5, 5, N, 5, 5,List.of(F), N, "Do not move if next to a wall at the " +
+                        "north")),
+                Arguments.of(new MowerTestCase(5, 2, E, 5, 2,List.of(F), E, "Do not move if next to a wall at the " +
+                        "east")),
+                Arguments.of(new MowerTestCase(1, 0, S, 1, 0,List.of(F), S, "Do not move if next to a wall at the " +
+                        "south")),
+                Arguments.of(new MowerTestCase(0, 0, W, 0, 0,List.of(F), W, "Do not move if next to a wall at the " +
+                        "west"))
         );
     }
 
@@ -68,8 +71,7 @@ class MowerTest {
     void shouldMoveAMowerWithChangeOfOrientation(MowerTestCase mowerTestCase) {
         Mower mower = mowerTestCase.mower;
         lawnService = new LawnService(lawnWidthDimension, lawnHeightDimension, List.of(mower));
-//        lawnService.applyInstruction(mowerTestCase.instructions, mower);
-        lawnService.applyInstruction(mower);
+        lawnService.startMowers();
         assertEquals(mower.getOrientation(), mowerTestCase.finalOrientation);
     }
 
@@ -95,9 +97,9 @@ class MowerTest {
     @Test
     void shouldNotMoveBecauseOfAnotherMower() {
         Mower mowerOne = new Mower(2, 2, E, new ArrayDeque<>(List.of(F)));
-        Mower mowerTwo = new Mower(3, 2, N);
+        Mower mowerTwo = new Mower(3, 2, N, new ArrayDeque<>());
         lawnService = new LawnService(lawnWidthDimension, lawnHeightDimension, List.of(mowerOne, mowerTwo));
-        lawnService.applyInstruction(mowerOne);
+        lawnService.startMowers();
         assertEquals(2, mowerOne.getCoordinates().getX());
         assertEquals(2, mowerOne.getCoordinates().getY());
     }
@@ -111,17 +113,6 @@ class MowerTest {
         private final Mower mower;
         private final String displayName;
         private final Orientation finalOrientation;
-
-        public MowerTestCase(int startX, int startY, Orientation orientation, int destX, int destY,
-                             Orientation finalOrientation, String displayName) {
-            this.startX = startX;
-            this.startY = startY;
-            this.destX = destX;
-            this.destY = destY;
-            this.mower = new Mower(startX, startY, orientation);
-            this.displayName = displayName;
-            this.finalOrientation = finalOrientation;
-        }
 
         public MowerTestCase(int startX, int startY, Orientation orientation, int destX, int destY,
                              List<Instruction> instructions, Orientation finalOrientation, String displayName) {

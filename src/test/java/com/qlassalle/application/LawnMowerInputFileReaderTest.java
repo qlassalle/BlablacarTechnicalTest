@@ -14,7 +14,7 @@ class LawnMowerInputFileReaderTest {
     @Test
     void shouldReadAnInputFile() {
         ClassLoader classLoader = getClass().getClassLoader();
-        var fileAsList = LawnMowerInputFileReader.readAsList(classLoader.getResourceAsStream("input/two_mowers.txt"));
+        var fileAsList = LawnMowerInputFileReader.readAsList("input/two_mowers.txt");
         assertEquals(List.of("5 5", "1 2 N", "LFLFLFLFF", "3 3 E", "FFRFFRFRRF"), fileAsList);
     }
 }
